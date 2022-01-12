@@ -2,6 +2,7 @@ import dao.UserDao;
 import dao.impl.UserDaoImpl;
 import entity.User;
 import enumaration.Role;
+import service.UserServiceImpl;
 
 import java.sql.SQLException;
 
@@ -11,6 +12,7 @@ public class Main {
 
 
         UserDao userDao = new UserDaoImpl();
+
         User user = userDao.getById(1);
         System.out.println(user.toString());
         user.setEmail("manuk@gmail.com");
