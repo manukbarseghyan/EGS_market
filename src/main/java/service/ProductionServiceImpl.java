@@ -1,7 +1,9 @@
 package service;
 
-import dao.ProductDao;
+import dao.impl.ProductDaoImpl;
 import entity.Product;
+import exception.BadRequestException;
+import exception.NotFoundException;
 import service.services.ProductService;
 
 import java.sql.SQLException;
@@ -9,15 +11,27 @@ import java.util.List;
 
 public class ProductionServiceImpl implements ProductService {
 
-    private ProductDao productDao;
+    private ProductDaoImpl productDao;
 
-    public ProductionServiceImpl(ProductDao productDao) {
+    public ProductionServiceImpl(ProductDaoImpl productDao) {
         this.productDao = productDao;
     }
 
     @Override
-    public Product getById(long id) throws SQLException {
-     return productDao.getById(id);
+    public Product getById(long id) throws NotFoundException , BadRequestException , SQLException {
+
+        if (id <= 0) {
+            throw new BadRequestException("Invalid Id ! ");
+        }
+        Product product = productDao.getById(id);
+
+        if (product == null){
+            throw new NotFoundException(" Product not found ! ");
+        }
+         return product ;
+
+
+
     }
 
     @Override
