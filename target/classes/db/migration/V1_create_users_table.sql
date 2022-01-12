@@ -5,6 +5,6 @@ first_name VARCHAR(255) NULL,
 last_name VARCHAR(255) NULL,
 email VARCHAR(255) NULL UNIQUE,
 password VARCHAR(255) NULL,
-role ENUM('ADMIN','SELLER')  NULL
+role ENUM('seller','admin') default 'seller' NULL
 )
 ENGINE = InnoDB DEFAULT CHARSET = UTF8;

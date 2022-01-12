@@ -35,8 +35,7 @@ public class UserDaoImpl implements UserDao {
             user.setLastName(resultSet.getString("last_name"));
             user.setEmail(resultSet.getString("email"));
             user.setPassword(resultSet.getString("password"));
-            // String roleStr = resultSet.getString("role");
-            // user.setRole(resultSet.getString("role"));
+            user.setRole(Role.getById(resultSet.getInt("role")));
 
             return user;
         } else return null;
@@ -63,6 +62,7 @@ public class UserDaoImpl implements UserDao {
             user.setLastName(resultSet.getString("last_name"));
             user.setEmail(resultSet.getString("email"));
             user.setPassword(resultSet.getString("password"));
+            user.setRole(Role.getById(resultSet.getInt("role")));
             users.add(user);
 
         }
@@ -83,7 +83,7 @@ public class UserDaoImpl implements UserDao {
         preparedStatement.setString(2, user.getLastName());
         preparedStatement.setString(3, user.getEmail());
         preparedStatement.setString(4, user.getPassword());
-        preparedStatement.setString(5, String.valueOf(user.getRole()));
+        preparedStatement.setInt(5, user.getRole().getId());
         preparedStatement.executeUpdate();
 
     }
@@ -101,7 +101,7 @@ public class UserDaoImpl implements UserDao {
         preparedStatement.setString(2, user.getLastName());
         preparedStatement.setString(3, user.getEmail());
         preparedStatement.setString(4, user.getPassword());
-        preparedStatement.setString(5, String.valueOf(user.getRole()));
+        preparedStatement.setInt(5, user.getRole().getId());
         preparedStatement.setLong(6, user.getId());
         preparedStatement.executeUpdate();
     }

@@ -3,21 +3,19 @@ package entity;
 
 import enumaration.Role;
 
-import java.util.List;
-
 public class User {
 
-private long id;
+    private long id;
 
-private String firstName;
+    private String firstName;
 
-private String lastName;
+    private String lastName;
 
-private String email;
+    private String email;
 
-private String password;
+    private String password;
 
-private Role role;
+    private Role role;
 
 
     public User() {

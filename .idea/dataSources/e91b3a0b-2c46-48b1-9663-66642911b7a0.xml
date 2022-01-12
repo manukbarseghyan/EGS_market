@@ -1169,7 +1169,7 @@
     </column>
     <column id="292" parent="281" name="transaction_type">
       <Position>4</Position>
-      <DataType>varchar(255)|0s</DataType>
+      <DataType>enum(&apos;add&apos;, &apos;sale&apos;, &apos;update&apos;, &apos;delete&apos;)|0e</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="293" parent="281" name="count">
@@ -1177,76 +1177,81 @@
       <DataType>int|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="294" parent="281" name="user_id">
+    <column id="294" parent="281" name="create_time">
+      <Position>6</Position>
+      <DataType>timestamp|0s</DataType>
+      <NotNull>1</NotNull>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="295" parent="281" name="user_id">
       <ColNames>user_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="295" parent="281" name="product_id">
+    <index id="296" parent="281" name="product_id">
       <ColNames>product_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="296" parent="281" name="PRIMARY">
+    <key id="297" parent="281" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="297" parent="281" name="transactions_ibfk_1">
+    <foreign-key id="298" parent="281" name="transactions_ibfk_1">
       <ColNames>user_id</ColNames>
       <RefSchemaName>market_db</RefSchemaName>
       <RefTableName>users</RefTableName>
       <RefColNames>id</RefColNames>
-      <OnDelete>cascade</OnDelete>
     </foreign-key>
-    <foreign-key id="298" parent="281" name="transactions_ibfk_2">
+    <foreign-key id="299" parent="281" name="transactions_ibfk_2">
       <ColNames>product_id</ColNames>
       <RefSchemaName>market_db</RefSchemaName>
       <RefTableName>products</RefTableName>
       <RefColNames>id</RefColNames>
-      <OnDelete>cascade</OnDelete>
     </foreign-key>
-    <column id="299" parent="282" name="id">
+    <column id="300" parent="282" name="id">
       <Position>1</Position>
       <DataType>int unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="300" parent="282" name="first_name">
+    <column id="301" parent="282" name="first_name">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="301" parent="282" name="last_name">
+    <column id="302" parent="282" name="last_name">
       <Position>3</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="302" parent="282" name="email">
+    <column id="303" parent="282" name="email">
       <Position>4</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="303" parent="282" name="password">
+    <column id="304" parent="282" name="password">
       <Position>5</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="304" parent="282" name="role">
+    <column id="305" parent="282" name="role">
       <Position>6</Position>
-      <DataType>enum(&apos;ADMIN&apos;, &apos;SELLER&apos;)|0e</DataType>
+      <DataType>enum(&apos;seller&apos;, &apos;admin&apos;)|0e</DataType>
+      <DefaultExpression>&apos;seller&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="305" parent="282" name="email">
+    <index id="306" parent="282" name="email">
       <ColNames>email</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="306" parent="282" name="PRIMARY">
+    <key id="307" parent="282" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="307" parent="282" name="email">
+    <key id="308" parent="282" name="email">
       <ColNames>email</ColNames>
       <UnderlyingIndexName>email</UnderlyingIndexName>
     </key>

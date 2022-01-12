@@ -1,21 +1,26 @@
 package entity;
 
 import enumaration.TransactionTypes;
-import sun.util.resources.LocaleData;
+
+import java.sql.Timestamp;
 
 public class Transaction {
 
     private long id;
 
-    private User user;
+    private long userId;
 
-    private Product product;
+    private long productId;
 
     private TransactionTypes types;
 
     private int count;
 
-    private LocaleData data;
+    private Timestamp localDate;
+
+    public Transaction() {
+    }
+
 
     public long getId() {
         return id;
@@ -25,20 +30,20 @@ public class Transaction {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
-    public Product getProduct() {
-        return product;
+    public long getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(long productId) {
+        this.productId = productId;
     }
 
     public TransactionTypes getTypes() {
@@ -57,23 +62,23 @@ public class Transaction {
         this.count = count;
     }
 
-    public LocaleData getData() {
-        return data;
+    public Timestamp getLocalDate() {
+        return localDate;
     }
 
-    public void setData(LocaleData data) {
-        this.data = data;
+    public void setLocalDate(Timestamp localDate) {
+        this.localDate = localDate;
     }
 
     @Override
     public String toString() {
         return "Transaction{" +
                 "id=" + id +
-                ", user=" + user +
-                ", product=" + product +
+                ", userId=" + userId +
+                ", productId=" + productId +
                 ", types=" + types +
                 ", count=" + count +
-                ", data=" + data +
+                ", localDate=" + localDate +
                 '}';
     }
 }

@@ -65,12 +65,14 @@ public class ProductDaoImpl implements ProductDao {
         statement = getConnection.getConnection().createStatement();
 
         preparedStatement = getConnection.getConnection()
-                .prepareStatement("insert into  users values (default, ?, ?, ?)");
+                .prepareStatement("insert into products values (default, ?, ?, ?, ?)");
 
         // Parameters start with 1
         preparedStatement.setString(1, product.getName());
         preparedStatement.setDouble(2, product.getPrice());
-        preparedStatement.setString(3, product.getBarcode());
+        preparedStatement.setInt(3, product.getCount());
+        preparedStatement.setString(4, product.getBarcode());
+
 
         preparedStatement.executeUpdate();
     }

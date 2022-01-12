@@ -7,8 +7,8 @@ import java.sql.SQLException;
 public class MySqlConnection {
 
 
-
     private static Connection connection = null;
+
     static {
 
         try {
@@ -19,7 +19,10 @@ public class MySqlConnection {
 
 
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/market_db", "root", "12345678");
+            connection = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/market_db",
+                    "root",
+                    "12345678");
         } catch (SQLException e) {
             e.printStackTrace();
         }
