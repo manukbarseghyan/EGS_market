@@ -1,7 +1,9 @@
 package entity;
 
 import enumaration.TransactionTypes;
-import sun.util.resources.LocaleData;
+
+import java.time.LocalDate;
+
 
 public class Transaction {
 
@@ -15,7 +17,7 @@ public class Transaction {
 
     private int count;
 
-    private LocaleData data;
+    private LocalDate data;
 
     public long getId() {
         return id;
@@ -57,11 +59,11 @@ public class Transaction {
         this.count = count;
     }
 
-    public LocaleData getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(LocaleData data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 
