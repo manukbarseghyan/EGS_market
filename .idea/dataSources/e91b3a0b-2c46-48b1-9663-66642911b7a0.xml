@@ -1116,82 +1116,139 @@
       <DefaultForCharset>0</DefaultForCharset>
     </collation>
     <table id="280" parent="3" name="products"/>
-    <table id="281" parent="3" name="users"/>
-    <column id="282" parent="280" name="id">
+    <table id="281" parent="3" name="transactions"/>
+    <table id="282" parent="3" name="users"/>
+    <column id="283" parent="280" name="id">
       <Position>1</Position>
       <DataType>int unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="283" parent="280" name="name">
+    <column id="284" parent="280" name="name">
       <Position>2</Position>
-      <DataType>varchar(100)|0s</DataType>
-      <NotNull>1</NotNull>
+      <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="284" parent="280" name="count">
+    <column id="285" parent="280" name="price">
       <Position>3</Position>
+      <DataType>double|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="286" parent="280" name="count">
+      <Position>4</Position>
       <DataType>int|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="285" parent="280" name="barcode">
-      <Position>4</Position>
-      <DataType>varchar(45)|0s</DataType>
-      <NotNull>1</NotNull>
+    <column id="287" parent="280" name="barcode">
+      <Position>5</Position>
+      <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="286" parent="280" name="PRIMARY">
+    <key id="288" parent="280" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="287" parent="281" name="id">
+    <column id="289" parent="281" name="id">
       <Position>1</Position>
       <DataType>int unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="288" parent="281" name="first_name">
+    <column id="290" parent="281" name="user_id">
       <Position>2</Position>
-      <DataType>varchar(32)|0s</DataType>
-      <NotNull>1</NotNull>
+      <DataType>int unsigned|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="289" parent="281" name="last_name">
+    <column id="291" parent="281" name="product_id">
       <Position>3</Position>
-      <DataType>varchar(32)|0s</DataType>
-      <NotNull>1</NotNull>
+      <DataType>int unsigned|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="290" parent="281" name="email">
+    <column id="292" parent="281" name="transaction_type">
       <Position>4</Position>
-      <DataType>varchar(45)|0s</DataType>
-      <NotNull>1</NotNull>
-      <ColumnKind>normal</ColumnKind>
-    </column>
-    <column id="291" parent="281" name="password">
-      <Position>5</Position>
       <DataType>varchar(255)|0s</DataType>
-      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="292" parent="281" name="date_created">
-      <Position>6</Position>
-      <DataType>timestamp|0s</DataType>
-      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
-      <ColumnKind>normal</ColumnKind>
-    </column>
-    <column id="293" parent="281" name="num_points">
-      <Position>7</Position>
+    <column id="293" parent="281" name="count">
+      <Position>5</Position>
       <DataType>int|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="294" parent="281" name="PRIMARY">
+    <index id="294" parent="281" name="user_id">
+      <ColNames>user_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="295" parent="281" name="product_id">
+      <ColNames>product_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="296" parent="281" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
+    </key>
+    <foreign-key id="297" parent="281" name="transactions_ibfk_1">
+      <ColNames>user_id</ColNames>
+      <RefSchemaName>market_db</RefSchemaName>
+      <RefTableName>users</RefTableName>
+      <RefColNames>id</RefColNames>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <foreign-key id="298" parent="281" name="transactions_ibfk_2">
+      <ColNames>product_id</ColNames>
+      <RefSchemaName>market_db</RefSchemaName>
+      <RefTableName>products</RefTableName>
+      <RefColNames>id</RefColNames>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <column id="299" parent="282" name="id">
+      <Position>1</Position>
+      <DataType>int unsigned|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="300" parent="282" name="first_name">
+      <Position>2</Position>
+      <DataType>varchar(255)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="301" parent="282" name="last_name">
+      <Position>3</Position>
+      <DataType>varchar(255)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="302" parent="282" name="email">
+      <Position>4</Position>
+      <DataType>varchar(255)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="303" parent="282" name="password">
+      <Position>5</Position>
+      <DataType>varchar(255)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="304" parent="282" name="role">
+      <Position>6</Position>
+      <DataType>enum(&apos;ADMIN&apos;, &apos;SELLER&apos;)|0e</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="305" parent="282" name="email">
+      <ColNames>email</ColNames>
+      <Unique>1</Unique>
+      <Type>btree</Type>
+    </index>
+    <key id="306" parent="282" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <key id="307" parent="282" name="email">
+      <ColNames>email</ColNames>
+      <UnderlyingIndexName>email</UnderlyingIndexName>
     </key>
   </database-model>
 </dataSource>

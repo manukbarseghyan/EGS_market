@@ -4,15 +4,30 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-    public class MySqlConnection {
+public class MySqlConnection {
 
-        public Connection getConnection() throws SQLException {
 
-            String URL = "jdbc:mysql://localhost:3306/market_db?serverTimezone=UTC";
-            String USERNAME = "root";
-            String PASSWORD = "12345678";
-            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            connection.setAutoCommit(true);
-            return connection;
+
+    private static Connection connection = null;
+    static {
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
+
+
+        try {
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/market_db", "root", "12345678");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static Connection getConnection() {
+        return connection;
+    }
+
 }
