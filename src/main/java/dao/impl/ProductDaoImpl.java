@@ -95,6 +95,15 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     public void delete(long id) throws SQLException {
+        final String sql = "DELETE FROM products  WHERE id=?";
+
+        statement = getConnection.getConnection().createStatement();
+
+        preparedStatement = getConnection.getConnection()
+                .prepareStatement(sql);
+        preparedStatement.setLong(1,id);
+
+        preparedStatement.executeUpdate();
 
     }
 }

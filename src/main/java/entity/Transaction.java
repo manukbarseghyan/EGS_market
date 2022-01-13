@@ -4,6 +4,7 @@ import enumaration.TransactionTypes;
 
 import java.sql.Timestamp;
 
+
 public class Transaction {
 
     private long id;

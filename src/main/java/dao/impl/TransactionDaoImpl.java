@@ -41,19 +41,7 @@ public class TransactionDaoImpl implements TransactionDao {
             transaction.setId(resultSet.getLong("id"));
             transaction.setUserId(resultSet.getLong("user_id"));
             transaction.setProductId(resultSet.getLong("product_id"));
-            String transactionType = resultSet.getString("transaction_type");
-            TransactionTypes type;
-
-            if (transactionType.equals("id: 1, type: add")) {
-                type = TransactionTypes.ADD;
-            } else if (transactionType.equals("id: 2, type: sale")) {
-                type = TransactionTypes.SALE;
-            } else if (transactionType.equals("id: 3, type: update")) {
-                type = TransactionTypes.UPDATE;
-            } else {
-                type = TransactionTypes.DELETE;
-            }
-            transaction.setTypes(type);
+            transaction.setTypes(TransactionTypes.valueOf(resultSet.getString("transaction_type")));
             transaction.setCount(resultSet.getInt("count"));
             transaction.setLocalDate(resultSet.getTimestamp("create_time"));
 
@@ -126,11 +114,16 @@ public class TransactionDaoImpl implements TransactionDao {
 
     public void delete(long id) throws SQLException {
 
+        final String sql = "DELETE FROM transactions  WHERE id=?";
+
         statement = getConnection.getConnection().createStatement();
 
         preparedStatement = getConnection.getConnection()
-                .prepareStatement("delete transactions WHERE id=?");
+                .prepareStatement(sql);
+        preparedStatement.setLong(1,id);
+
         preparedStatement.executeUpdate();
+
 
     }
 }

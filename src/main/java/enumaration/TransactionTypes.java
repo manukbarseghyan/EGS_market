@@ -3,19 +3,19 @@ package enumaration;
 public enum TransactionTypes {
     ADD(1) {
         public String toString() {
-            return "id: 1, type: add";
+            return "add";
         }
     },
     SALE(2) {
         public String toString() {
-            return "id: 2, type: sale";
+            return "sale";
         }
     },
     UPDATE(3) {
-        public String toString() { return "id: 3, type: update"; }
+        public String toString() { return "update"; }
     },
     DELETE(4) {
-        public String toString() { return "id: 4, type: delete"; }
+        public String toString() { return "delete"; }
     };
 
     private final int id;
