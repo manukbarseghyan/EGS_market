@@ -10,7 +10,6 @@ import enumaration.TransactionTypes;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class TransactionDaoImpl implements TransactionDao {
@@ -120,7 +119,7 @@ public class TransactionDaoImpl implements TransactionDao {
 
         preparedStatement = getConnection.getConnection()
                 .prepareStatement(sql);
-        preparedStatement.setLong(1,id);
+        preparedStatement.setLong(1, id);
 
         preparedStatement.executeUpdate();
 

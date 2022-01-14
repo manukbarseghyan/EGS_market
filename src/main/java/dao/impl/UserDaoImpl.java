@@ -7,6 +7,7 @@ import enumaration.Role;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
@@ -34,7 +35,10 @@ public class UserDaoImpl implements UserDao {
             user.setFirstName(resultSet.getString("first_name"));
             user.setLastName(resultSet.getString("last_name"));
             user.setEmail(resultSet.getString("email"));
-            user.setPassword(resultSet.getString("password"));
+
+            byte[] decodedPass = Base64.getDecoder().decode(resultSet.getString("password"));
+            String password = new String(decodedPass);
+            user.setPassword(password);
             user.setRole(Role.valueOf(resultSet.getString("role").toUpperCase()));
             return user;
         } else return null;
@@ -60,8 +64,11 @@ public class UserDaoImpl implements UserDao {
             user.setFirstName(resultSet.getString("first_name"));
             user.setLastName(resultSet.getString("last_name"));
             user.setEmail(resultSet.getString("email"));
-            user.setPassword(resultSet.getString("password"));
-            user.setRole(Role.getById(resultSet.getInt("role")));
+
+            byte[] decodedPass = Base64.getDecoder().decode(resultSet.getString("password"));
+            String password = new String(decodedPass);
+            user.setPassword(password);
+            user.setRole(Role.valueOf(resultSet.getString("role").toUpperCase()));
             users.add(user);
 
         }
@@ -81,8 +88,7 @@ public class UserDaoImpl implements UserDao {
         preparedStatement.setString(1, user.getFirstName());
         preparedStatement.setString(2, user.getLastName());
         preparedStatement.setString(3, user.getEmail());
-        preparedStatement.setString(4, user.getPassword());
-        preparedStatement.setInt(5, user.getRole().getId());
+        preparedStatement.setString(4, Base64.getEncoder().encodeToString(user.getPassword().getBytes()));      preparedStatement.setInt(5, user.getRole().getId());
         preparedStatement.executeUpdate();
 
     }
@@ -99,7 +105,7 @@ public class UserDaoImpl implements UserDao {
         preparedStatement.setString(1, user.getFirstName());
         preparedStatement.setString(2, user.getLastName());
         preparedStatement.setString(3, user.getEmail());
-        preparedStatement.setString(4, user.getPassword());
+        preparedStatement.setString(4, Base64.getEncoder().encodeToString(user.getPassword().getBytes()));
         preparedStatement.setInt(5, user.getRole().getId());
         preparedStatement.setLong(6, user.getId());
         preparedStatement.executeUpdate();

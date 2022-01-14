@@ -1,9 +1,5 @@
-import dao.ProductDao;
 import dao.UserDao;
-import dao.impl.ProductDaoImpl;
 import dao.impl.UserDaoImpl;
-import entity.Product;
-import entity.User;
 
 import java.sql.SQLException;
 
@@ -13,36 +9,39 @@ public class Main {
 
 
         UserDao userDao = new UserDaoImpl();
-        User user =new User();
-      //  user.setRole(Role.ADMIN);
-        user.setEmail("manuk@emafijfil");
-        String pass = "asdqwe";
-        user.setPassword(pass);
-        user.setLastName("barseghyan");
-        user.setFirstName("manuk");
+//        User user =new User();
+//        user.setRole(Role.ADMIN);
+//        user.setEmail("manuk@emafijfil");
+//        String pass = "asdqwe";
+//        user.setPassword(pass);
+//
+//        user.setLastName("barseghyan");
+//        user.setFirstName("manuk");
 
-        userDao.save(user);
+        System.out.println(userDao.getAll());
+
+
 //
 //        UserDao userDao = new UserDaoImpl();
 //
 //        User user = userDao.getById(1);
 //
-        System.out.println(user.toString());
+//        System.out.println(user.toString());
 //        user.setEmail("manuk@gmail.com");
 //        User user1 = user;
 //        user1.setRole(Role.ADMIN);
-
-        Product product = new Product();
-
-        product.setBarcode("4447554");
-        product.setPrice(131651);
-        product.setName("apple");
-        product.setCount(10);
-
-
-        ProductDao productDao = new ProductDaoImpl();
-
-        productDao.save(product);
+//
+//        Product product = new Product();
+//
+//        product.setBarcode("4447554");
+//        product.setPrice(131651);
+//        product.setName("apple");
+//        product.setCount(10);
+//
+//
+//        ProductDao productDao = new ProductDaoImpl();
+//
+//        productDao.save(product);
 //        productDao.save(product);
 
 //        User user1 = userDao.getById(1);
