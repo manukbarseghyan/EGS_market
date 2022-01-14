@@ -2,9 +2,7 @@ package dao.impl;
 
 import connector.MySqlConnection;
 import dao.TransactionDao;
-import entity.Product;
 import entity.Transaction;
-import entity.User;
 import enumaration.TransactionTypes;
 
 import java.sql.*;
@@ -14,115 +12,131 @@ import java.util.List;
 
 public class TransactionDaoImpl implements TransactionDao {
 
-    private MySqlConnection getConnection = null;
-    private Statement statement = null;
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
-    private User user = new User();
-    private Product product = new Product();
 
-
-    public Transaction getById(long id) throws SQLException {
+    public Transaction getById(long id){
 
         String sql = "select * from transactions where id = ?";
 
         Transaction transaction = new Transaction();
 
 
-        Connection connection = MySqlConnection.getConnection();
-        preparedStatement = connection.prepareStatement(sql);
-        preparedStatement.setLong(1, id);
-        resultSet = preparedStatement.executeQuery();
-        connection.commit();
+        try (Connection connection = MySqlConnection.getConnection()) {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+            resultSet = preparedStatement.executeQuery();
 
-        if (resultSet.next()) {
+            if (resultSet.next()) {
 
-            transaction.setId(resultSet.getLong("id"));
-            transaction.setUserId(resultSet.getLong("user_id"));
-            transaction.setProductId(resultSet.getLong("product_id"));
-            transaction.setTypes(TransactionTypes.valueOf(resultSet.getString("transaction_type")));
-            transaction.setCount(resultSet.getInt("count"));
-            transaction.setLocalDate(resultSet.getTimestamp("create_time"));
+                transaction.setId(resultSet.getLong("id"));
+                transaction.setUserId(resultSet.getLong("user_id"));
+                transaction.setProductId(resultSet.getLong("product_id"));
+                transaction.setTypes(TransactionTypes.valueOf(resultSet.getString("transaction_type")));
+                transaction.setCount(resultSet.getInt("count"));
+                transaction.setLocalDate(resultSet.getTimestamp("create_time"));
 
-            return transaction;
-        } else return null;
+                return transaction;
+            }
+        } catch (SQLException e) {
+            System.out.println("Transaction by id : +" + id + "not found");
+        }
+        return null;
     }
 
 
-    public List<Transaction> getAll() throws SQLException {
+    public List<Transaction> getAll() {
 
         String sql = "select * from transactions";
 
         Transaction transaction = new Transaction();
         List<Transaction> transactions = new ArrayList<>();
-        Connection connection = MySqlConnection.getConnection();
-        preparedStatement = connection.prepareStatement(sql);
-        resultSet = preparedStatement.executeQuery();
 
-        while (resultSet.next()) {
+        try (Connection connection = MySqlConnection.getConnection()) {
 
-            transaction.setId(resultSet.getLong("id"));
-            transaction.setUserId(resultSet.getLong("user_id"));
-            transaction.setProductId(resultSet.getLong("product_id"));
-            transaction.setTypes((TransactionTypes) resultSet.getObject("transaction_type"));
-            transaction.setCount(resultSet.getInt("count"));
-            transaction.setLocalDate(resultSet.getTimestamp("create_time"));
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
 
-            transactions.add(transaction);
+            while (resultSet.next()) {
+
+                transaction.setId(resultSet.getLong("id"));
+                transaction.setUserId(resultSet.getLong("user_id"));
+                transaction.setProductId(resultSet.getLong("product_id"));
+                transaction.setTypes((TransactionTypes) resultSet.getObject("transaction_type"));
+                transaction.setCount(resultSet.getInt("count"));
+                transaction.setLocalDate(resultSet.getTimestamp("create_time"));
+
+                transactions.add(transaction);
+            }
             return transactions;
+        } catch (SQLException e) {
+            System.out.println("Transactions not found");
         }
-
-        return transactions;
+        return null;
     }
 
-    public void save(Transaction transaction) throws SQLException {
+    public boolean save(Transaction transaction) {
 
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        statement = getConnection.getConnection().createStatement();
 
-        preparedStatement = getConnection.getConnection()
-                .prepareStatement("insert into transactions values (default, ?, ?, ?, ?, ?)");
+        try (Connection connection = MySqlConnection.getConnection()) {
 
-        // Parameters start with 1
-        preparedStatement.setLong(1, transaction.getUserId());
-        preparedStatement.setLong(2, transaction.getProductId());
-        preparedStatement.setInt(3, transaction.getTypes().getId());
-        preparedStatement.setInt(4, transaction.getCount());
-        preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-        preparedStatement.executeUpdate();
+            preparedStatement = connection
+                    .prepareStatement("insert into transactions values (default, ?, ?, ?, ?, ?)");
+
+            // Parameters start with 1
+            preparedStatement.setLong(1, transaction.getUserId());
+            preparedStatement.setLong(2, transaction.getProductId());
+            preparedStatement.setInt(3, transaction.getTypes().getId());
+            preparedStatement.setInt(4, transaction.getCount());
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            int result = preparedStatement.executeUpdate();
+            return result == 1;
+        } catch (SQLException e) {
+            System.out.println("Transaction not save");
+        }
+        return false;
     }
 
-    public void update(Transaction transaction) throws SQLException {
+    public boolean update(Transaction transaction) {
 
-        statement = getConnection.getConnection().createStatement();
+        try (Connection connection = MySqlConnection.getConnection()) {
 
-        preparedStatement = getConnection.getConnection()
-                .prepareStatement("UPDATE transactions SET user_id=?, product_id=?, transaction_type=?," +
-                        " count=?, create_time=? WHERE id=?");
+            preparedStatement = connection
+                    .prepareStatement("UPDATE transactions SET user_id=?, product_id=?, transaction_type=?," +
+                            " count=?, create_time=? WHERE id=?");
 
-        // Parameters start with 1
-        preparedStatement.setLong(1, transaction.getUserId());
-        preparedStatement.setLong(2, transaction.getProductId());
-        preparedStatement.setObject(3, transaction.getTypes());
-        preparedStatement.setInt(4, transaction.getCount());
-        preparedStatement.setTimestamp(5, transaction.getLocalDate());
-        preparedStatement.setLong(6, transaction.getId());
-        preparedStatement.executeUpdate();
+            // Parameters start with 1
+            preparedStatement.setLong(1, transaction.getUserId());
+            preparedStatement.setLong(2, transaction.getProductId());
+            preparedStatement.setObject(3, transaction.getTypes());
+            preparedStatement.setInt(4, transaction.getCount());
+            preparedStatement.setTimestamp(5, transaction.getLocalDate());
+            preparedStatement.setLong(6, transaction.getId());
+            int result = preparedStatement.executeUpdate();
+            return result == 1;
+        } catch (SQLException e) {
+            System.out.println("Transaction not update");
+        }
+        return false;
 
     }
 
-    public void delete(long id) throws SQLException {
+    public boolean delete(long id) {
 
         final String sql = "DELETE FROM transactions  WHERE id=?";
 
-        statement = getConnection.getConnection().createStatement();
+        try (Connection connection = MySqlConnection.getConnection()) {
 
-        preparedStatement = getConnection.getConnection()
-                .prepareStatement(sql);
-        preparedStatement.setLong(1, id);
+            preparedStatement = connection
+                    .prepareStatement(sql);
+            preparedStatement.setLong(1, id);
 
-        preparedStatement.executeUpdate();
-
+            int result = preparedStatement.executeUpdate();
+            return result == 1;
+        } catch (SQLException e) {
+            System.out.println("Transaction not delete");
+        }
+        return false;
 
     }
 }

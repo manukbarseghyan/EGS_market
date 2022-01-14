@@ -4,106 +4,134 @@ import connector.MySqlConnection;
 import dao.ProductDao;
 import entity.Product;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDaoImpl implements ProductDao {
 
-    private MySqlConnection getConnection = null;
-    private Statement statement = null;
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
 
-    public Product getById(long id) throws SQLException {
+
+    public Product getById(long id) {
+
         String sql = "select * from products where id = ?";
 
         Product product = new Product();
 
-        Connection connection = MySqlConnection.getConnection();
-        preparedStatement = connection.prepareStatement(sql);
-        preparedStatement.setLong(1, id);
-        resultSet = preparedStatement.executeQuery();
 
-        if (resultSet.next()) {
+        try (Connection connection = MySqlConnection.getConnection()) {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+            resultSet = preparedStatement.executeQuery();
 
-            product.setId(resultSet.getLong("id"));
-            product.setName(resultSet.getString("name"));
-            product.setPrice(resultSet.getDouble("price"));
-            product.setBarcode(resultSet.getString("code"));
+            if (resultSet.next()) {
 
-            return product;
-        } else return null;
+                product.setId(resultSet.getLong("id"));
+                product.setName(resultSet.getString("name"));
+                product.setPrice(resultSet.getDouble("price"));
+                product.setBarcode(resultSet.getString("code"));
+                return product;
+            }
 
+        } catch (SQLException e) {
+            System.out.println("Product by id: +"+ id + " not found");
+        }
+        return null;
     }
 
-    public List<Product> getAll() throws SQLException {
+    public List<Product> getAll() {
 
         String sql = "select * from products";
 
         Product product = new Product();
-        List<Product> products = new ArrayList<Product>();
+        List<Product> products = new ArrayList<>();
 
-        Connection connection = MySqlConnection.getConnection();
-        preparedStatement = connection.prepareStatement(sql);
-        resultSet = preparedStatement.executeQuery();
+        try (Connection connection = MySqlConnection.getConnection()) {
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
 
-        while (resultSet.next()) {
+            while (resultSet.next()) {
 
-            product.setId(resultSet.getLong("id"));
-            product.setName(resultSet.getString("name"));
-            product.setPrice(resultSet.getDouble("price"));
-            product.setBarcode(resultSet.getString("barcode"));
-            products.add(product);
+                product.setId(resultSet.getLong("id"));
+                product.setName(resultSet.getString("name"));
+                product.setPrice(resultSet.getDouble("price"));
+                product.setBarcode(resultSet.getString("barcode"));
+                products.add(product);
 
+            }
+        } catch (SQLException e) {
+            System.out.println("Products not found");
         }
         return products;
     }
 
-    public void save(Product product) throws SQLException {
+    public boolean save(Product product) {
 
-        statement = getConnection.getConnection().createStatement();
+        String sql = "insert into products values (default, ?, ?, ?, ?)";
+        try (Connection connection = MySqlConnection.getConnection()) {
 
-        preparedStatement = getConnection.getConnection()
-                .prepareStatement("insert into products values (default, ?, ?, ?, ?)");
+            preparedStatement = connection
+                    .prepareStatement(sql);
 
-        // Parameters start with 1
-        preparedStatement.setString(1, product.getName());
-        preparedStatement.setDouble(2, product.getPrice());
-        preparedStatement.setInt(3, product.getCount());
-        preparedStatement.setString(4, product.getBarcode());
-
-
-        preparedStatement.executeUpdate();
+            // Parameters start with 1
+            preparedStatement.setString(1, product.getName());
+            preparedStatement.setDouble(2, product.getPrice());
+            preparedStatement.setInt(3, product.getCount());
+            preparedStatement.setString(4, product.getBarcode());
+            int result = preparedStatement.executeUpdate();
+            return result == 1;
+        } catch (SQLException e) {
+            System.out.println("Product not save");
+        }
+        return false;
     }
 
-    public void update(Product product) throws SQLException {
+    public boolean update(Product product) {
 
-        statement = getConnection.getConnection().createStatement();
+        final String sql = "UPDATE products SET name=?, price=?, count=?, barcode=? WHERE id=?";
+        try (Connection connection = MySqlConnection.getConnection()) {
+            preparedStatement = connection
+                    .prepareStatement(sql);
 
-        preparedStatement = getConnection.getConnection()
-                .prepareStatement("UPDATE products SET name=?, price=?, count=?, barcode=? WHERE id=?");
+            // Parameters start with 1
+            preparedStatement.setString(1, product.getName());
+            preparedStatement.setDouble(2, product.getPrice());
+            preparedStatement.setInt(3, product.getCount());
+            preparedStatement.setString(4, product.getBarcode());
+            preparedStatement.setLong(5, product.getId());
 
-        // Parameters start with 1
-        preparedStatement.setString(1, product.getName());
-        preparedStatement.setDouble(2, product.getPrice());
-        preparedStatement.setInt(3, product.getCount());
-        preparedStatement.setString(4, product.getBarcode());
-        preparedStatement.setLong(5, product.getId());
+            int result = preparedStatement.executeUpdate();
+            return result == 1;
+        } catch (SQLException e) {
+            System.out.println("Product not update");
+        }
+        return false;
 
-        preparedStatement.executeUpdate();
+
     }
 
-    public void delete(long id) throws SQLException {
+    public boolean delete(long id){
+
         final String sql = "DELETE FROM products  WHERE id=?";
 
-        statement = getConnection.getConnection().createStatement();
+        try (Connection connection = MySqlConnection.getConnection()) {
 
-        preparedStatement = getConnection.getConnection()
+        preparedStatement = connection
                 .prepareStatement(sql);
-        preparedStatement.setLong(1,id);
+        preparedStatement.setLong(1, id);
 
         preparedStatement.executeUpdate();
+            int result = preparedStatement.executeUpdate();
+            return result == 1;
+        } catch (SQLException e) {
+            System.out.println("Product not delete");
+        }
+        return false;
 
     }
 }

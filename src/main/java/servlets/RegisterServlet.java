@@ -38,6 +38,7 @@ public class RegisterServlet extends HttpServlet {
         user.setEmail(String.valueOf(request.getParameter("email")));
         user.setPassword(String.valueOf(request.getParameter("password")));
         user.setRole(Role.ADMIN);
+
         try {
             PrintWriter pw = response.getWriter();
             pw.println(user.toString());

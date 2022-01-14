@@ -9,9 +9,9 @@ public interface Dao<T> {
 
     List<T> getAll() throws SQLException;
 
-    void save(T t) throws SQLException;
+    boolean save(T t) throws SQLException;
 
-    void update(T t) throws SQLException;
+    boolean update(T t) throws SQLException;
 
-    void delete(long id) throws SQLException;
+    boolean delete(long id) throws SQLException;
 }

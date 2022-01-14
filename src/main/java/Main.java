@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 public class Main {
 
-    public static void main(String[] args) throws SQLException, IllegalAccessException, InstantiationException {
+    public static void main(String[] args) throws SQLException{
 
 
         UserDao userDao = new UserDaoImpl();
@@ -18,7 +18,7 @@ public class Main {
 //        user.setLastName("barseghyan");
 //        user.setFirstName("manuk");
 
-        System.out.println(userDao.getAll());
+        System.out.println(userDao.getById(1));
 
 
 //

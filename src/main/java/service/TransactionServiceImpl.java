@@ -22,7 +22,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getAll() throws SQLException {
+    public List<Transaction> getAll() {
         return null;
     }
 
@@ -59,17 +59,19 @@ public class TransactionServiceImpl implements TransactionService {
             transactionDao.save(transaction);
         }else if (transaction.getTypes() == TransactionTypes.DELETE){
 
+
         }
 
     }
 
     @Override
-    public void update(Transaction transaction) throws SQLException {
+    public void update(Transaction transaction){
 
     }
 
     @Override
-    public void delete(long id) throws SQLException {
+    public void delete(long id) {
+
 
     }
 }

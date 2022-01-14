@@ -18,110 +18,124 @@ public class UserDaoImpl implements UserDao {
     private ResultSet resultSet = null;
 
 
-    public User getById(long id) throws SQLException {
+    public User getById(long id) {
 
         String sql = "select * from users where id = ?";
-
         User user = new User();
 
-        Connection connection = MySqlConnection.getConnection();
-        preparedStatement = connection.prepareStatement(sql);
-        preparedStatement.setLong(1, id);
-        resultSet = preparedStatement.executeQuery();
+        try (Connection connection = MySqlConnection.getConnection()) {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+            resultSet = preparedStatement.executeQuery();
 
-        if (resultSet.next()) {
+            if (resultSet.next()) {
 
-            user.setId(resultSet.getLong("id"));
-            user.setFirstName(resultSet.getString("first_name"));
-            user.setLastName(resultSet.getString("last_name"));
-            user.setEmail(resultSet.getString("email"));
+                user.setId(resultSet.getLong("id"));
+                user.setFirstName(resultSet.getString("first_name"));
+                user.setLastName(resultSet.getString("last_name"));
+                user.setEmail(resultSet.getString("email"));
 
-            byte[] decodedPass = Base64.getDecoder().decode(resultSet.getString("password"));
-            String password = new String(decodedPass);
-            user.setPassword(password);
-            user.setRole(Role.valueOf(resultSet.getString("role").toUpperCase()));
-            return user;
-        } else return null;
-
+                byte[] decodedPass = Base64.getDecoder().decode(resultSet.getString("password"));
+                String password = new String(decodedPass);
+                user.setPassword(password);
+                user.setRole(Role.valueOf(resultSet.getString("role").toUpperCase()));
+                return user;
+            }
+        } catch (SQLException e) {
+            System.out.println("User not found");
+        }
+        return null;
     }
 
-    public List<User> getAll() throws SQLException {
+    public List<User> getAll() {
 
         String sql = "select * from users";
 
         User user = new User();
 
-        List<User> users = new ArrayList<User>();
+        List<User> users = new ArrayList<>();
 
-        statement = getConnection.getConnection().createStatement();
+        try (Connection connection = MySqlConnection.getConnection()) {
+            statement = connection.createStatement();
+            resultSet = statement
+                    .executeQuery(sql);
+            while (resultSet.next()) {
 
-        resultSet = statement
-                .executeQuery(sql);
+                user.setId(resultSet.getLong("id"));
+                user.setFirstName(resultSet.getString("first_name"));
+                user.setLastName(resultSet.getString("last_name"));
+                user.setEmail(resultSet.getString("email"));
+                byte[] decodedPass = Base64.getDecoder().decode(resultSet.getString("password"));
+                String password = new String(decodedPass);
+                user.setPassword(password);
+                user.setRole(Role.valueOf(resultSet.getString("role").toUpperCase()));
+                users.add(user);
 
-        while (resultSet.next()) {
-
-            user.setId(resultSet.getLong("id"));
-            user.setFirstName(resultSet.getString("first_name"));
-            user.setLastName(resultSet.getString("last_name"));
-            user.setEmail(resultSet.getString("email"));
-
-            byte[] decodedPass = Base64.getDecoder().decode(resultSet.getString("password"));
-            String password = new String(decodedPass);
-            user.setPassword(password);
-            user.setRole(Role.valueOf(resultSet.getString("role").toUpperCase()));
-            users.add(user);
-
+            }
+        } catch (SQLException e) {
+            System.out.println("Users not found");
         }
 
-        return users;
+        return null;
     }
 
-    public void save(User user) throws SQLException {
+    public boolean save(User user) {
 
-
-        statement = getConnection.getConnection().createStatement();
-
-        preparedStatement = getConnection.getConnection()
-                .prepareStatement("insert into  users values (default, ?, ?, ?, ? , ?)");
-
-        // Parameters start with 1
-        preparedStatement.setString(1, user.getFirstName());
-        preparedStatement.setString(2, user.getLastName());
-        preparedStatement.setString(3, user.getEmail());
-        preparedStatement.setString(4, Base64.getEncoder().encodeToString(user.getPassword().getBytes()));      preparedStatement.setInt(5, user.getRole().getId());
-        preparedStatement.executeUpdate();
-
+        try (Connection connection = MySqlConnection.getConnection()) {
+            preparedStatement = connection
+                    .prepareStatement("insert into  users values (default, ?, ?, ?, ? , ?)");
+            // Parameters start with 1
+            preparedStatement.setString(1, user.getFirstName());
+            preparedStatement.setString(2, user.getLastName());
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(4, Base64.getEncoder().encodeToString(user.getPassword().getBytes()));
+            preparedStatement.setInt(5, user.getRole().getId());
+            int result = preparedStatement.executeUpdate();
+            return result == 1;
+        } catch (SQLException e) {
+            System.out.println("User not saved");
+        }
+        return false;
     }
 
-    public void update(User user) throws SQLException {
+    public boolean update(User user) {
 
-        statement = getConnection.getConnection().createStatement();
+        String sql = "UPDATE users SET first_name=?,last_name=?," +
+                "email=?,password=?,role=? WHERE id=?";
 
-        preparedStatement = getConnection.getConnection()
-                .prepareStatement("UPDATE users SET first_name=?,last_name=?," +
-                        "email=?,password=?,role=? WHERE id=?");
-
-        // Parameters start with 1
-        preparedStatement.setString(1, user.getFirstName());
-        preparedStatement.setString(2, user.getLastName());
-        preparedStatement.setString(3, user.getEmail());
-        preparedStatement.setString(4, Base64.getEncoder().encodeToString(user.getPassword().getBytes()));
-        preparedStatement.setInt(5, user.getRole().getId());
-        preparedStatement.setLong(6, user.getId());
-        preparedStatement.executeUpdate();
+        try (Connection connection = MySqlConnection.getConnection()) {
+            preparedStatement = connection
+                    .prepareStatement(sql);
+            // Parameters start with 1
+            preparedStatement.setString(1, user.getFirstName());
+            preparedStatement.setString(2, user.getLastName());
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(4, Base64.getEncoder().encodeToString(user.getPassword().getBytes()));
+            preparedStatement.setInt(5, user.getRole().getId());
+            preparedStatement.setLong(6, user.getId());
+            int result = preparedStatement.executeUpdate();
+            return result == 1;
+        } catch (SQLException e) {
+            System.out.println("User not update");
+        }
+        return false;
     }
 
-    public void delete(long id) throws SQLException {
+    public boolean delete(long id){
 
         final String sql = "DELETE FROM passengers  WHERE id=?";
 
-        statement = getConnection.getConnection().createStatement();
+        try (Connection connection = MySqlConnection.getConnection()) {
+            preparedStatement = connection
+                    .prepareStatement(sql);
+            preparedStatement.setLong(1, id);
 
-        preparedStatement = getConnection.getConnection()
-                .prepareStatement(sql);
-        preparedStatement.setLong(1,id);
-
-        preparedStatement.executeUpdate();
-
+            int result = preparedStatement.executeUpdate();
+            return result == 1;
+        } catch (SQLException e) {
+            System.out.println("User not delete");
+        }
+        return false;
     }
 }
+
