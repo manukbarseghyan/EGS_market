@@ -4,8 +4,6 @@ import dao.UserDao;
 import dao.impl.UserDaoImpl;
 import entity.User;
 import enumaration.Role;
-import service.UserServiceImpl;
-import service.services.UserService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 
 public class RegisterServlet extends HttpServlet {
 
@@ -45,13 +42,8 @@ public class RegisterServlet extends HttpServlet {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        UserService userService = new UserServiceImpl();
         UserDao userDao = new UserDaoImpl();
-        try {
             userDao.save(user);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
 
     }

@@ -1,30 +1,4 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: haykazp
-  Date: 13/01/2022
-  Time: 07:48
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Project</title>
-
-    <!-- Scripts -->
-    <script src="http://localhost:8080/public/js/app.js" defer></script>
-
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-
-    <!-- Styles -->
-    <link href="http://localhost:8080/public/css/app.css" rel="stylesheet">
-</head>
-<body>
+<<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <div id="app">
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
         <div class="container">
@@ -48,7 +22,7 @@
 
                     <li class="nav-item dropdown">
                         <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            Username <span class="caret"></span>
+                            <span class="caret"></span>
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -85,5 +59,3 @@
         </div>
     </main>
 </div>
-</body>
-</html>

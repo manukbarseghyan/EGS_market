@@ -1,4 +1,4 @@
-package service.services;
+package service;
 
 import entity.Product;
 

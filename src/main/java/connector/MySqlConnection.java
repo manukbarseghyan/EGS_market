@@ -7,9 +7,14 @@ import java.sql.SQLException;
 public class MySqlConnection {
 
 
-    private static Connection connection = null;
+    private static Connection connection;
+
 
     static {
+        final String url = "jdbc:mysql://localhost:3306/market_db";
+        final String user = "root";
+        final String password = "12345678";
+       // final String unicode="useSSL=false&autoReconnect=true&useUnicode=yes&characterEncoding=UTF-8";
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -19,18 +24,17 @@ public class MySqlConnection {
 
 
         try {
-            connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/market_db",
-                    "root",
-                    "12345678");
+            connection = DriverManager.getConnection(url,user,password
+            );
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-
     }
 
-    public static Connection getConnection() {
+    public static Connection getConnection(){
+
         return connection;
     }
 

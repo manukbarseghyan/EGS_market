@@ -1,5 +1,11 @@
+import dao.ProductDao;
+import dao.TransactionDao;
 import dao.UserDao;
+import dao.impl.ProductDaoImpl;
+import dao.impl.TransactionDaoImpl;
 import dao.impl.UserDaoImpl;
+import entity.User;
+import enumaration.Role;
 
 import java.sql.SQLException;
 
@@ -9,17 +15,27 @@ public class Main {
 
 
         UserDao userDao = new UserDaoImpl();
-//        User user =new User();
-//        user.setRole(Role.ADMIN);
-//        user.setEmail("manuk@emafijfil");
-//        String pass = "asdqwe";
-//        user.setPassword(pass);
-//
-//        user.setLastName("barseghyan");
-//        user.setFirstName("manuk");
+        User user =new User();
+        user.setRole(Role.ADMIN);
+        user.setEmail("manuk@emafijfil");
+        String pass = "asdqwe";
+        user.setPassword(pass);
 
-        System.out.println(userDao.getById(1));
+        user.setLastName("barseghyan");
+        user.setFirstName("manuk");
+        ProductDao productDao = new ProductDaoImpl();
 
+        TransactionDao transactionDao = new TransactionDaoImpl();
+        System.out.println(transactionDao.getAll());
+//        System.out.println(userDao.getById(7));
+//        System.out.println(userDao.getById(7));
+       System.out.println(userDao.getById(7));
+        System.out.println(userDao.getById(7));
+        System.out.println(userDao.getAll());
+        System.out.println(productDao.getAll());
+        System.out.println(productDao.getAll());
+        System.out.println(productDao.getAll());
+        System.out.println(productDao.getAll());
 
 //
 //        UserDao userDao = new UserDaoImpl();

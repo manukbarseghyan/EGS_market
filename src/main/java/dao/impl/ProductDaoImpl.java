@@ -13,24 +13,22 @@ import java.util.List;
 
 public class ProductDaoImpl implements ProductDao {
 
-    private PreparedStatement preparedStatement = null;
-    private ResultSet resultSet = null;
+    private MySqlConnection databaseConnection;
 
 
     public Product getById(long id) {
 
         String sql = "select * from products where id = ?";
 
-        Product product = new Product();
+        try {
+            Connection connection = databaseConnection.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
-
-        try (Connection connection = MySqlConnection.getConnection()) {
-            preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
-            resultSet = preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-
+                Product product = new Product();
                 product.setId(resultSet.getLong("id"));
                 product.setName(resultSet.getString("name"));
                 product.setPrice(resultSet.getDouble("price"));
@@ -39,7 +37,7 @@ public class ProductDaoImpl implements ProductDao {
             }
 
         } catch (SQLException e) {
-            System.out.println("Product by id: +"+ id + " not found");
+            System.out.println("Product by id: +" + id + " not found");
         }
         return null;
     }
@@ -48,19 +46,14 @@ public class ProductDaoImpl implements ProductDao {
 
         String sql = "select * from products";
 
-        Product product = new Product();
         List<Product> products = new ArrayList<>();
-
-        try (Connection connection = MySqlConnection.getConnection()) {
-            preparedStatement = connection.prepareStatement(sql);
-            resultSet = preparedStatement.executeQuery();
+        Connection connection = MySqlConnection.getConnection();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-
-                product.setId(resultSet.getLong("id"));
-                product.setName(resultSet.getString("name"));
-                product.setPrice(resultSet.getDouble("price"));
-                product.setBarcode(resultSet.getString("barcode"));
+                Product product = getById(resultSet.getLong("id"));
                 products.add(product);
 
             }
@@ -72,10 +65,11 @@ public class ProductDaoImpl implements ProductDao {
 
     public boolean save(Product product) {
 
-        String sql = "insert into products values (default, ?, ?, ?, ?)";
-        try (Connection connection = MySqlConnection.getConnection()) {
+        final String sql = "insert into products values (default, ?, ?, ?, ?)";
+        try {
 
-            preparedStatement = connection
+            Connection connection = databaseConnection.getConnection();
+            PreparedStatement preparedStatement = connection
                     .prepareStatement(sql);
 
             // Parameters start with 1
@@ -94,8 +88,9 @@ public class ProductDaoImpl implements ProductDao {
     public boolean update(Product product) {
 
         final String sql = "UPDATE products SET name=?, price=?, count=?, barcode=? WHERE id=?";
-        try (Connection connection = MySqlConnection.getConnection()) {
-            preparedStatement = connection
+
+        try (Connection connection = databaseConnection.getConnection()) {
+            PreparedStatement preparedStatement = connection
                     .prepareStatement(sql);
 
             // Parameters start with 1
@@ -115,17 +110,17 @@ public class ProductDaoImpl implements ProductDao {
 
     }
 
-    public boolean delete(long id){
+    public boolean delete(long id) {
 
         final String sql = "DELETE FROM products  WHERE id=?";
 
-        try (Connection connection = MySqlConnection.getConnection()) {
+        try (Connection connection = databaseConnection.getConnection()) {
 
-        preparedStatement = connection
-                .prepareStatement(sql);
-        preparedStatement.setLong(1, id);
+            PreparedStatement preparedStatement = connection
+                    .prepareStatement(sql);
+            preparedStatement.setLong(1, id);
 
-        preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
             int result = preparedStatement.executeUpdate();
             return result == 1;
         } catch (SQLException e) {

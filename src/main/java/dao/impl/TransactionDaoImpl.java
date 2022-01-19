@@ -12,23 +12,20 @@ import java.util.List;
 
 public class TransactionDaoImpl implements TransactionDao {
 
-    private PreparedStatement preparedStatement = null;
-    private ResultSet resultSet = null;
+    private MySqlConnection databaseConnection;
 
-    public Transaction getById(long id){
+    public Transaction getById(long id) {
 
         String sql = "select * from transactions where id = ?";
+        Connection connection = databaseConnection.getConnection();
 
-        Transaction transaction = new Transaction();
-
-
-        try (Connection connection = MySqlConnection.getConnection()) {
-            preparedStatement = connection.prepareStatement(sql);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
-            resultSet = preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-
+                Transaction transaction = new Transaction();
                 transaction.setId(resultSet.getLong("id"));
                 transaction.setUserId(resultSet.getLong("user_id"));
                 transaction.setProductId(resultSet.getLong("product_id"));
@@ -48,23 +45,15 @@ public class TransactionDaoImpl implements TransactionDao {
     public List<Transaction> getAll() {
 
         String sql = "select * from transactions";
-
-        Transaction transaction = new Transaction();
         List<Transaction> transactions = new ArrayList<>();
+        Connection connection = databaseConnection.getConnection();
 
-        try (Connection connection = MySqlConnection.getConnection()) {
-
-            preparedStatement = connection.prepareStatement(sql);
-            resultSet = preparedStatement.executeQuery();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-
-                transaction.setId(resultSet.getLong("id"));
-                transaction.setUserId(resultSet.getLong("user_id"));
-                transaction.setProductId(resultSet.getLong("product_id"));
-                transaction.setTypes((TransactionTypes) resultSet.getObject("transaction_type"));
-                transaction.setCount(resultSet.getInt("count"));
-                transaction.setLocalDate(resultSet.getTimestamp("create_time"));
+                Transaction transaction = getById(resultSet.getLong("id"));
 
                 transactions.add(transaction);
             }
@@ -77,11 +66,13 @@ public class TransactionDaoImpl implements TransactionDao {
 
     public boolean save(Transaction transaction) {
 
+        String sql = "insert into transactions values (default, ?, ?, ?, ?, ?)";
+        Connection connection = databaseConnection.getConnection();
 
-        try (Connection connection = MySqlConnection.getConnection()) {
+        try {
 
-            preparedStatement = connection
-                    .prepareStatement("insert into transactions values (default, ?, ?, ?, ?, ?)");
+            PreparedStatement preparedStatement = connection
+                    .prepareStatement(sql);
 
             // Parameters start with 1
             preparedStatement.setLong(1, transaction.getUserId());
@@ -98,12 +89,12 @@ public class TransactionDaoImpl implements TransactionDao {
     }
 
     public boolean update(Transaction transaction) {
-
-        try (Connection connection = MySqlConnection.getConnection()) {
-
-            preparedStatement = connection
-                    .prepareStatement("UPDATE transactions SET user_id=?, product_id=?, transaction_type=?," +
-                            " count=?, create_time=? WHERE id=?");
+        String sql = "UPDATE transactions SET user_id=?, product_id=?, transaction_type=?," +
+                " count=?, create_time=? WHERE id=?";
+        Connection connection = databaseConnection.getConnection();
+        try {
+            PreparedStatement preparedStatement = connection
+                    .prepareStatement(sql);
 
             // Parameters start with 1
             preparedStatement.setLong(1, transaction.getUserId());
@@ -124,10 +115,10 @@ public class TransactionDaoImpl implements TransactionDao {
     public boolean delete(long id) {
 
         final String sql = "DELETE FROM transactions  WHERE id=?";
+        Connection connection = databaseConnection.getConnection();
+        try {
 
-        try (Connection connection = MySqlConnection.getConnection()) {
-
-            preparedStatement = connection
+            PreparedStatement preparedStatement = connection
                     .prepareStatement(sql);
             preparedStatement.setLong(1, id);
 

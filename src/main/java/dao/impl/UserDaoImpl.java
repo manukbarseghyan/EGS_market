@@ -12,10 +12,7 @@ import java.util.List;
 
 public class UserDaoImpl implements UserDao {
 
-    private MySqlConnection getConnection = null;
-    private Statement statement = null;
-    private PreparedStatement preparedStatement = null;
-    private ResultSet resultSet = null;
+    private MySqlConnection databaseConnection;
 
 
     public User getById(long id) {
@@ -23,72 +20,76 @@ public class UserDaoImpl implements UserDao {
         String sql = "select * from users where id = ?";
         User user = new User();
 
-        try (Connection connection = MySqlConnection.getConnection()) {
-            preparedStatement = connection.prepareStatement(sql);
+
+        try {
+            Connection connection = databaseConnection.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
             preparedStatement.setLong(1, id);
-            resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
 
-                user.setId(resultSet.getLong("id"));
-                user.setFirstName(resultSet.getString("first_name"));
-                user.setLastName(resultSet.getString("last_name"));
-                user.setEmail(resultSet.getString("email"));
+                if (resultSet.next()) {
 
-                byte[] decodedPass = Base64.getDecoder().decode(resultSet.getString("password"));
-                String password = new String(decodedPass);
-                user.setPassword(password);
-                user.setRole(Role.valueOf(resultSet.getString("role").toUpperCase()));
-                return user;
+                    user.setId(resultSet.getLong("id"));
+                    user.setFirstName(resultSet.getString("first_name"));
+                    user.setLastName(resultSet.getString("last_name"));
+                    user.setEmail(resultSet.getString("email"));
+                    byte[] decodedPass = Base64.getDecoder().decode(resultSet.getString("password"));
+                    String password = new String(decodedPass);
+                    user.setPassword(password);
+                    user.setRole(Role.valueOf(resultSet.getString("role").toUpperCase()));
+                    preparedStatement.close();
+                    resultSet.close();
+                    return user;
+                }
+            } catch (SQLException e) {
+                System.out.println("User not found");
             }
+
         } catch (SQLException e) {
-            System.out.println("User not found");
+            e.printStackTrace();
         }
-        return null;
+        return user;
     }
 
     public List<User> getAll() {
 
         String sql = "select * from users";
 
-        User user = new User();
-
         List<User> users = new ArrayList<>();
 
-        try (Connection connection = MySqlConnection.getConnection()) {
-            statement = connection.createStatement();
-            resultSet = statement
+        try {
+            Connection connection = databaseConnection.getConnection();
+            Statement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement
                     .executeQuery(sql);
+
             while (resultSet.next()) {
-
-                user.setId(resultSet.getLong("id"));
-                user.setFirstName(resultSet.getString("first_name"));
-                user.setLastName(resultSet.getString("last_name"));
-                user.setEmail(resultSet.getString("email"));
-                byte[] decodedPass = Base64.getDecoder().decode(resultSet.getString("password"));
-                String password = new String(decodedPass);
-                user.setPassword(password);
-                user.setRole(Role.valueOf(resultSet.getString("role").toUpperCase()));
+                User user = getById(resultSet.getLong("id"));
                 users.add(user);
-
             }
         } catch (SQLException e) {
             System.out.println("Users not found");
         }
 
-        return null;
+        return users;
     }
 
     public boolean save(User user) {
 
-        try (Connection connection = MySqlConnection.getConnection()) {
+        String sql = "insert into  users values (default, ?, ?, ?, ? , ?)";
+        PreparedStatement preparedStatement;
+        try {
+            Connection connection = databaseConnection.getConnection();
             preparedStatement = connection
-                    .prepareStatement("insert into  users values (default, ?, ?, ?, ? , ?)");
+                    .prepareStatement(sql);
             // Parameters start with 1
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setString(3, user.getEmail());
-            preparedStatement.setString(4, Base64.getEncoder().encodeToString(user.getPassword().getBytes()));
+            preparedStatement.setString(4, Base64.getEncoder()
+                    .encodeToString(user.getPassword().getBytes()));
             preparedStatement.setInt(5, user.getRole().getId());
             int result = preparedStatement.executeUpdate();
             return result == 1;
@@ -103,14 +104,16 @@ public class UserDaoImpl implements UserDao {
         String sql = "UPDATE users SET first_name=?,last_name=?," +
                 "email=?,password=?,role=? WHERE id=?";
 
-        try (Connection connection = MySqlConnection.getConnection()) {
-            preparedStatement = connection
+        try {
+            Connection connection = databaseConnection.getConnection();
+            PreparedStatement preparedStatement = connection
                     .prepareStatement(sql);
             // Parameters start with 1
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setString(3, user.getEmail());
-            preparedStatement.setString(4, Base64.getEncoder().encodeToString(user.getPassword().getBytes()));
+            preparedStatement.setString(4, Base64.getEncoder()
+                    .encodeToString(user.getPassword().getBytes()));
             preparedStatement.setInt(5, user.getRole().getId());
             preparedStatement.setLong(6, user.getId());
             int result = preparedStatement.executeUpdate();
@@ -121,12 +124,12 @@ public class UserDaoImpl implements UserDao {
         return false;
     }
 
-    public boolean delete(long id){
+    public boolean delete(long id) {
 
         final String sql = "DELETE FROM passengers  WHERE id=?";
 
-        try (Connection connection = MySqlConnection.getConnection()) {
-            preparedStatement = connection
+        try (Connection connection = databaseConnection.getConnection()) {
+            PreparedStatement preparedStatement = connection
                     .prepareStatement(sql);
             preparedStatement.setLong(1, id);
 
@@ -137,5 +140,31 @@ public class UserDaoImpl implements UserDao {
         }
         return false;
     }
+
+    public User login(String username, String password) {
+
+        final String sql = "SELECT * FROM users WHERE email=? AND password=?";
+        User user = null;
+        String encodePass = Base64.getEncoder().encodeToString(password.getBytes());
+        try {
+            Connection connection = databaseConnection.getConnection();
+            PreparedStatement preparedStatement = connection
+                    .prepareStatement(sql);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, encodePass);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+
+                user = getById(resultSet.getLong("id"));
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println("invalid username or password");
+        }
+        return user;
+    }
 }
+
 

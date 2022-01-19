@@ -1,8 +1,9 @@
-package dao;
+package service;
 
 import java.util.List;
 
-public interface Dao<T> {
+public interface Service<T> {
+
 
     T getById(long id);
 
